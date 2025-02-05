@@ -30,6 +30,22 @@ namespace Blue
 		
 		// 뷰포트
 		D3D11_VIEWPORT viewport = {};
+
+		// @Temp: 임시
+		
+		// 정점 버퍼
+		ID3D11Buffer* vertexBuffer = nullptr;
+
+		// 인덱스 버퍼 (정점을 조립할 때 정점의 순서를 전달)
+		ID3D11Buffer* indexBuffer = nullptr;
+
+		// 입력 레이아웃
+		ID3D11InputLayout* inputlayout = nullptr;
+
+		// 쉐이더 객체
+		ID3D11VertexShader* vertexShader = nullptr;
+		ID3D11PixelShader* pixelShader = nullptr;
+
 	};
 
 
