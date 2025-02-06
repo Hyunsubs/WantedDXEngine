@@ -6,32 +6,30 @@
 
 namespace Blue
 {
-	// 윈도우 클래스
+	// 윈도우 클래스.
 	class Window
 	{
 	public:
-		Window(
-			uint32 width,
-			uint32 height,
+		Window(uint32 width, 
+			uint32 height, 
 			const std::wstring& title,
 			HINSTANCE instance,
 			WNDPROC messageProcedure
 		);
-
 		~Window();
 
-		// Getter/Setter
+		// Getter/Setter.
 		inline const uint32 Width() const { return width; }
 		inline const uint32 Height() const { return height; }
 		inline HWND Handle() const { return handle; }
 
-		inline void SetWidthHeight(uint32 width, uint32 height);
+		void SetWidthHeight(uint32 width, uint32 height);
 
 	private:
 		uint32 width = 0;
 		uint32 height = 0;
-		std::wstring title = {};
-		std::wstring className = TEXT("DX Engine Class");
+		std::wstring title = nullptr;
+		std::wstring className = TEXT("Engine Class");
 		HWND handle = nullptr;
 		HINSTANCE instance = nullptr;
 	};
