@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include <vector>
 #include <d3dcompiler.h>
+#include "../Math/Vector3.h"
 
 namespace Blue
 {
@@ -99,17 +100,17 @@ namespace Blue
 		// 정점 데이터 생성.
 		//std::vector
 		// vertex -> vertices.
-		float vertices[] =
+		Vector3 vertices[] =
 		{
-			0.0f, 0.5f, 0.5f,
-			0.5f, -0.5f, 0.5f,
-			-0.5f, -0.5f, 0.5f,
+			Vector3(0.0f, 0.5f, 0.5f),
+			Vector3(0.5f, -0.5f, 0.5f),
+			Vector3(-0.5f, -0.5f, 0.5f),
 		};
 
 		// @Temp: 임시 리소스 생성.
 		// 버퍼(Buffer) - 메모리 덩어리.
 		D3D11_BUFFER_DESC vertexbufferDesc = {};
-		vertexbufferDesc.ByteWidth = sizeof(float) * 3 * 3;
+		vertexbufferDesc.ByteWidth = Vector3::Stride() * 3;
 		vertexbufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		// 정점 데이터.
@@ -240,6 +241,52 @@ namespace Blue
 
 		// 픽셀 쉐이더 컴파일/생성.
 		// 각 리소스 바인딩.
+				// 쉐이더 컴파일.
+		ID3DBlob* pixelShaderBuffer = nullptr;
+		result = D3DCompileFromFile(
+			TEXT("PixelShader.hlsl"),
+			nullptr,
+			nullptr,
+			"main",
+			"ps_5_0",
+			0, 0,
+			&pixelShaderBuffer, nullptr
+		);
+
+		if (FAILED(result))
+		{
+			MessageBoxA(
+				nullptr,
+				"Failed to compile pixel shader",
+				"Error",
+				MB_OK
+			);
+
+			__debugbreak();
+		}
+
+		// 쉐이더 생성.
+		result = device->CreatePixelShader(
+			pixelShaderBuffer->GetBufferPointer(),
+			pixelShaderBuffer->GetBufferSize(),
+			nullptr,
+			&pixelShader
+		);
+
+		if (FAILED(result))
+		{
+			MessageBoxA(
+				nullptr,
+				"Failed to create pixel shader",
+				"Error",
+				MB_OK
+			);
+
+			__debugbreak();
+		}
+
+
+
 	}
 
 	Renderer::~Renderer()
@@ -254,6 +301,28 @@ namespace Blue
 		context->ClearRenderTargetView(renderTargetView, color);
 
 		// 드로우(Draw) (Draw).
+		// 리소스 바인딩
+ 
+		// 정점 버퍼 전달.==
+		static unsigned int stride = Vector3::Stride();
+		static unsigned int offset = 0;
+		context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+		// 인덱스 버퍼 전달
+		context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+		// 입력 레이아웃
+		context->IASetInputLayout(inputlayout);
+
+		// 조립할 모양 설정
+		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		// 쉐이더 설정
+		context->VSSetShader(vertexShader, nullptr, 0);
+		context->PSSetShader(pixelShader, nullptr, 0);
+
+		
+		// 드로우 콜
+		context->DrawIndexed(3, 0, 0);
 
 		// 버퍼 교환. (EndScene/Present).
 		swapChain->Present(1u, 0u);
