@@ -4,11 +4,11 @@
 
 namespace Blue
 {
-	const Vector3 Vector3::Zero = Vector3(0.f, 0.f, 0.f);
-	const Vector3 Vector3::One = Vector3(1.f, 1.f ,1.f);
-	const Vector3 Vector3::Right = Vector3(1.f, 0.f, 0.f);
-	const Vector3 Vector3::Up = Vector3(0.f, 1.f, 0.f);
-	const Vector3 Vector3::Forward = Vector3(0.f, 0.f , 1.f);
+	const Vector3 Vector3::Zero = Vector3(0.0f, 0.0f, 0.0f);
+	const Vector3 Vector3::One = Vector3(1.0f, 1.0f, 1.0f);
+	const Vector3 Vector3::Right = Vector3(1.0f, 0.0f, 0.0f);
+	const Vector3 Vector3::Up = Vector3(0.0f, 1.0f, 0.0f);
+	const Vector3 Vector3::Forward = Vector3(0.0f, 0.0f, 1.0f);
 
 	Vector3& Vector3::operator+=(const Vector3& other)
 	{
@@ -36,7 +36,7 @@ namespace Blue
 
 	Vector3& Vector3::operator/=(float scale)
 	{
-		assert(scale != 0.f);
+		assert(scale != 0.0f);
 		x /= scale;
 		y /= scale;
 		z /= scale;
@@ -61,8 +61,7 @@ namespace Blue
 	std::wstring Vector3::ToString()
 	{
 		wchar_t buffer[256];
-		swprintf_s(buffer, 256, L"(%f , %f, %f)", x, y, z);
-
+		swprintf_s(buffer, 256, L"(%f,%f,%f)", x, y, z);
 		return buffer;
 	}
 
@@ -104,13 +103,13 @@ namespace Blue
 
 	Vector3 operator/(const Vector3& vector, float scale)
 	{
-		assert(scale != 0.f);
-		return Vector3(vector.x / scale, vector.y / scale, vector.z /scale);
+		assert(scale != 0.0f);
+		return Vector3(vector.x / scale, vector.y / scale, vector.z / scale);
 	}
 
 	float Dot(const Vector3& left, const Vector3& right)
 	{
-		return (left.x * right.x) + (left.y * right.y) + (left.z * right.z);
+		return left.x * right.x + left.y * right.y + left.z * right.z;
 	}
 
 	Vector3 Cross(const Vector3& left, const Vector3& right)
@@ -119,23 +118,23 @@ namespace Blue
 		(
 			left.y * right.z - left.z * right.y,
 			left.z * right.x - left.x * right.z,
-			left.x * right.y - left.y * right.z
+			left.x * right.y - left.y * right.x
 		);
 	}
 
 	Vector3 Lerp(const Vector3& from, const Vector3& to, float t)
 	{
-		// t 가두기
-		if (t < 0.f)
+		// t 가두기.
+		//t = t < 0.0f ? 0.0f : t < 1.0f ? 1.0f : t;
+		if (t < 0.0f)
 		{
-			t = 0.f;
+			t = 0.0f;
+		}
+		if (t > 1.0f)
+		{
+			t = 1.0f;
 		}
 
-		if (t > 1.f)
-		{
-			t = 1.f;
-		}
-
-		return (1.f - t) * from + t * to;
+		return (1.0f - t) * from + t * to;
 	}
 }
