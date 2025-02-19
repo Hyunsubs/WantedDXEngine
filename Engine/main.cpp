@@ -1,6 +1,8 @@
 #include "Core/Engine.h"
 #include <iostream>
 
+#include "Render/Texture.h"
+
 //#include "Math/Vector2.h"
 
 using namespace Blue;
