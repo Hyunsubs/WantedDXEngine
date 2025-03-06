@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Core\Window.cpp">
@@ -39,16 +39,31 @@
     <ClCompile Include="Render\Mesh.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Render\QuadMesh.cpp">
+    <ClCompile Include="Render\TriangleMesh.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Render\TriangleMesh.cpp">
+    <ClCompile Include="Render\QuadMesh.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Render\Texture.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Shader\TextureMappingShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\ShaderLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\TextureLoader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader\DefaultShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrix4.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Transform.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,30 +89,58 @@
     <ClInclude Include="Shader\Shader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Vertex.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Render\Mesh.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Render\QuadMesh.h">
+    <ClInclude Include="Render\Vertex.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Render\TriangleMesh.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Texture.h">
+    <ClInclude Include="Render\QuadMesh.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Library\stbi_image.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Texture.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Shader\TextureMappingShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Common.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\ShaderLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\TextureLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader\DefaultShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix4.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Transform.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stbi_image.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSLShader\DefaultVertexShader.hlsl" />
     <FxCompile Include="HLSLShader\DefaultPixelShader.hlsl" />
+    <FxCompile Include="HLSLShader\TextureMappingPixelShader.hlsl" />
+    <FxCompile Include="HLSLShader\TextureMappingVertexShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\ShaderLoader.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

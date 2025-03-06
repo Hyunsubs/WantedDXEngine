@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Shader.h"
-#include "Render/Texture.h"
 #include <memory>
 
 namespace Blue
@@ -10,14 +9,13 @@ namespace Blue
 	{
 	public:
 		TextureMappingShader();
-		TextureMappingShader(const std::string& textureName = "");
+		TextureMappingShader(const std::string& textureName);
 
 		virtual void Bind() override;
 
 	private:
-		// 咆胶贸 府家胶
-		std::unique_ptr<Texture> texture;
+		// 咆胶贸 府家胶.
+		//std::unique_ptr<class Texture> texture;
+		std::weak_ptr<class Texture> texture;
 	};
 }
-
-

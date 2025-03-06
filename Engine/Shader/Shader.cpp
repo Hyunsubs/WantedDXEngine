@@ -14,8 +14,19 @@ namespace Blue
 		// 장치 객체 얻어오기.
 		ID3D11Device& device = Engine::Get().Device();
 
-		// CSO 로드
+		// CSO 로드.
 		auto result = D3DReadFileToBlob(path, &vertexShaderBuffer);
+		if (FAILED(result))
+		{
+			MessageBoxA(
+				nullptr,
+				"Failed to read vertex shader object",
+				"Error",
+				MB_OK
+			);
+
+			__debugbreak();
+		}
 
 		// 쉐이더 생성.
 		result = device.CreateVertexShader(
@@ -29,7 +40,7 @@ namespace Blue
 		{
 			MessageBoxA(
 				nullptr,
-				"Failed to read vertex shader object",
+				"Failed to create vertex shader",
 				"Error",
 				MB_OK
 			);
@@ -43,7 +54,7 @@ namespace Blue
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 		result = device.CreateInputLayout(
@@ -66,13 +77,10 @@ namespace Blue
 			__debugbreak();
 		}
 
-		// 픽셀 쉐이더 컴파일/생성.
-		// 각 리소스 바인딩.
-		// 쉐이더 컴파일.
-		//ID3DBlob* pixelShaderBuffer = nullptr;
+		// CSO 로드.
 		swprintf_s(path, 256, L"../CompiledShader/%sPixelShader.cso", name.c_str());
-		result = D3DReadFileToBlob(path, &pixelShaderBuffer);
 
+		result = D3DReadFileToBlob(path, &pixelShaderBuffer);
 		if (FAILED(result))
 		{
 			MessageBoxA(
