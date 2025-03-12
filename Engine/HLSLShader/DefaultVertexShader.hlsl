@@ -21,7 +21,8 @@ struct VertexOutput
 VertexOutput main(VertexInput input)
 {
     VertexOutput output;
-    //output.position = float4(input.position, 1);
+    // output.position = float4(input.position, 1);
+    // WorldMatrix °öÇÑ °á°ú
     output.position = mul(float4(input.position, 1), worldMatrix);
     output.color = input.color;
     output.texCoord = input.texCoord;
