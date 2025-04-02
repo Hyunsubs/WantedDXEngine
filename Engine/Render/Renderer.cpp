@@ -7,6 +7,9 @@
 #include "QuadMesh.h"
 #include "Core/Common.h"
 
+#include "Level/Level.h"
+#include "Actor/Actor.h"
+
 namespace Blue
 {
 	Renderer::Renderer(uint32 width, uint32 height, HWND window)
@@ -58,24 +61,10 @@ namespace Blue
 		swapChainDesc.BufferDesc.Width = width;
 		swapChainDesc.BufferDesc.Height = height;
 		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		swapChainDesc.BufferDesc.RefreshRate.Denominator = 144;
+		swapChainDesc.BufferDesc.RefreshRate.Numerator = 1;
 		// 그리기 전에 매번 렌더타겟 뷰 바인딩 하도록 하는 옵션
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-
-		// 장치 생성 및 스왑체인 생성 같이 만드는 버전
-		//ThrowIfFailed(D3D11CreateDeviceAndSwapChain(
-		//	nullptr,
-		//	D3D_DRIVER_TYPE_HARDWARE,
-		//	nullptr,
-		//	flag,
-		//	featureLevels,
-		//	_countof(featureLevels),
-		//	D3D11_SDK_VERSION,
-		//	&swapChainDesc,
-		//	&swapChain,
-		//	&device,
-		//	nullptr,
-		//	&context
-		//), TEXT("Failed to create devices"));
 
 		// SwapChain 생성
 		ThrowIfFailed(factory->CreateSwapChain
@@ -87,17 +76,8 @@ namespace Blue
 
 		// 렌더 타겟 뷰 생성.
 		ID3D11Texture2D* backbuffer = nullptr;
-		//swapChain->GetBuffer(
-		//	0,
-		//	__uuidof(backbuffer),
-		//	reinterpret_cast<void**>(&backbuffer)
-		//);
 		ThrowIfFailed(swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer)), TEXT("Failed To Get Back Buffer"));
 		ThrowIfFailed(device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView), TEXT("Failedd To Create Render Target View"));
-
-		// 렌더 타겟 뷰 바인딩(연결).
-		// 1회만 연결할때 쓰던 함수
-		//context->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
 		// 뷰포트(화면).
 		viewport.TopLeftX = 0.0f;
@@ -115,32 +95,8 @@ namespace Blue
 	{
 	}
 
-	void Renderer::Draw()
+	void Renderer::Draw(std::shared_ptr<class Level> level)
 	{
-		// @임시/Test
-		if (mesh == nullptr)
-		{
-			//mesh = std::make_unique<TriangleMesh>();
-			mesh = std::make_unique<QuadMesh>();
-			mesh->transform.scale = Vector3::One * 0.5f;
-			mesh->transform.position.x = 0.5f;
-		}
-		if (mesh2 == nullptr)
-		{
-			//mesh = std::make_unique<TriangleMesh>();
-			mesh2 = std::make_unique<QuadMesh>();
-			mesh2->transform.scale = Vector3::One * 0.5f;
-			mesh2->transform.position.x = -0.5f;
-		}
-
-		if (mesh3 == nullptr)
-		{
-			//mesh = std::make_unique<TriangleMesh>();
-			mesh3 = std::make_unique<TriangleMesh>();
-			mesh3->transform.scale = Vector3::One * 0.5f;
-			mesh3->transform.position.y = -0.5f;
-		}
-
 		// 그리기 전 작업 (BeginScene).
 		context->OMSetRenderTargets(1, &renderTargetView, nullptr);
 
@@ -148,14 +104,25 @@ namespace Blue
 		float color[] = { 0.6f, 0.7f, 0.8f, 1.0f };
 		context->ClearRenderTargetView(renderTargetView, color);
 
-		// @Test.
-		mesh->Update(1.0f / 60.0f);
-		mesh2->Update(1.0f / 60.0f);
+		// Draw
+		// 카메라 바인딩
+		if (level->GetCamera())
+		{
+			level->GetCamera()->Draw();
+		}
 
-		// 드로우.
-		mesh->Draw();
-		mesh2->Draw();
-		mesh3->Draw();
+
+		for (uint32 ix = 0; ix < level->ActorCount(); ix++)
+		{
+			// 액터 가져오기
+			auto actor = level->GetActor(ix);
+
+			// Draw
+			if (actor->IsActive())
+			{
+				actor->Draw();
+			}
+		}
 
 		// 버퍼 교환. (EndScene/Present).
 		swapChain->Present(1u, 0u);

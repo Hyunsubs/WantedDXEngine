@@ -40,10 +40,8 @@ namespace Blue
 		}
 	}
 
-	void Transform::Bind()
+	void Transform::Tick()
 	{
-		static ID3D11DeviceContext& context = Engine::Get().Context();
-
 		// 데이터 업데이트
 		// 트랜스폼 행렬(SRT)
 		transformMatrix = Matrix4::Scale(scale) * Matrix4::Rotation(rotation) * Matrix4::Translation(position);
@@ -52,6 +50,12 @@ namespace Blue
 		// 행기준 행렬을 열기준 행렬로 변환하기 위해 전치행렬 처리
 		transformMatrix = Matrix4::Transpose(transformMatrix);
 
+	}
+
+	void Transform::Bind()
+	{
+		static ID3D11DeviceContext& context = Engine::Get().Context();
+		
 		// 버퍼 업데이트
 		D3D11_MAPPED_SUBRESOURCE resource = {};
 		context.Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
