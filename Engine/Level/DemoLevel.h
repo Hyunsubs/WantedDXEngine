@@ -12,5 +12,10 @@ namespace Blue
 	public:
 		DemoLevel();
 		~DemoLevel();
+
+		virtual void Tick(float deltaTime) override;
+
+	private:
+		std::shared_ptr<class QuadActor> actor;
 	};
 }
