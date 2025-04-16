@@ -13,6 +13,7 @@ struct PixelInput
 
 // Texture.
 Texture2D diffuseMap : register(t0);
+Texture2D normalMap : register(t1);
 SamplerState diffuseSampler : register(s0);
 
 float4 main(PixelInput input) : SV_TARGET
@@ -20,12 +21,22 @@ float4 main(PixelInput input) : SV_TARGET
     // Sampling.
     float4 texColor = diffuseMap.Sample(diffuseSampler, input.texCoord);
     
+    float4 tangentNormal = normalMap.Sample(diffuseSampler, input.texCoord);
+    tangentNormal = tangentNormal * 2.f - 1.f;
+    
+    // tangent to world transformation matrix.
+    float3x3 tangentToWorld = float3x3(
+        normalize(input.tangent),
+        normalize(input.bitangent),
+        normalize(input.normal)
+    );
+    
     // Light Dir.
     float3 lightDir = -float3(500.0f, 500.0f, -500.0f);
     lightDir = normalize(lightDir);
     
     // World Normal.
-    float3 worldNormal = normalize(input.normal);
+    float3 worldNormal = mul(tangentNormal.xyz, tangentToWorld);
     
     // Dot (Lambert Cosine Law).
     float nDotl = CalcHalfLambert(worldNormal, lightDir, 0.5f);

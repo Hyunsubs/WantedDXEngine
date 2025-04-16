@@ -47,7 +47,7 @@ VertexOutput main(VertexInput input)
     output.color = input.color;
     output.texCoord = input.texCoord;
     
-    output.normal = mul(input.normal, (float3x3)worldMatrix);
+    output.normal = mul(input.normal, (float3x3) worldMatrix);
     output.tangent = mul(input.tangent, (float3x3) worldMatrix);
     output.bitangent = mul(input.bitangent, (float3x3) worldMatrix);
     

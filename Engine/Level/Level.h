@@ -6,8 +6,8 @@
 
 namespace Blue
 {
+	// 월드에 배치된 액터를 관리.
 	class Actor;
-	// 월드에 배치된 액터를 관리
 	class Level
 	{
 	public:
@@ -19,16 +19,16 @@ namespace Blue
 
 		void AddActor(std::shared_ptr<Actor> newActor);
 
-		// Getter
+		// Getter.
 		std::shared_ptr<Actor> GetActor(int index) const;
 		const uint32 ActorCount() const;
 
-		inline std::shared_ptr<Actor> GetCamera() const { return cameraActor; }
+		std::shared_ptr<Actor> GetCamera() const;
 
 	protected:
 		std::vector<std::shared_ptr<Actor>> actors;
 
-		// 메인 카메라 액터
+		// 메인 카메라 액터.
 		std::shared_ptr<Actor> cameraActor;
 	};
 }

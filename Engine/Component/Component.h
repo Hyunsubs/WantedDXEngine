@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace Blue
 {
 	class Component
@@ -13,13 +12,10 @@ namespace Blue
 		virtual void Tick(float deltaTime);
 		virtual void Draw();
 
-		inline class Actor* GetOwner() const { return owner; }
-		inline void SetOwner(class Actor* newOwner) { owner = newOwner; }
-
+		class Actor* GetOwner() const;
+		void SetOwner(class Actor* newOwner);
 
 	protected:
 		class Actor* owner = nullptr;
 	};
-
-	
 }

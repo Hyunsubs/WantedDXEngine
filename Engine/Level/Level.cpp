@@ -27,7 +27,6 @@ namespace Blue
 			cameraActor->Tick(deltaTime);
 		}
 
-
 		for (const auto& actor : actors)
 		{
 			actor->Tick(deltaTime);
@@ -36,8 +35,8 @@ namespace Blue
 
 	void Level::AddActor(std::shared_ptr<Actor> newActor)
 	{
-		// 새로 추가하는 액터가 카메라 컴포넌트를 가졌는지 확인
-		// 가졌다면 메인 카메라로 설정
+		// 새로 추가하는 액터가 카메라 컴포넌트를 가졌는데 확인.
+		// 가졌다면, 메인 카메라로 설정.
 		for (auto component : newActor->components)
 		{
 			std::shared_ptr<CameraComponent> cameraComp
@@ -50,17 +49,17 @@ namespace Blue
 			}
 		}
 
-
 		actors.emplace_back(newActor);
 	}
 
 	std::shared_ptr<Actor> Level::GetActor(int index) const
 	{
-		// 예외처리
+		// 예외 처리.
 		if (index < 0 || index >= (int)actors.size())
 		{
 			return nullptr;
 		}
+
 		return actors[index];
 	}
 
@@ -68,5 +67,9 @@ namespace Blue
 	{
 		return (uint32)actors.size();
 	}
-
+	
+	std::shared_ptr<Actor> Level::GetCamera() const
+	{
+		return cameraActor;
+	}
 }

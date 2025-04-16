@@ -6,14 +6,20 @@
 
 namespace Blue
 {
-	// 카메라 버퍼 (상수 버퍼)
+	// 카메라 버퍼 (상수 버퍼).
 	struct CameraBuffer
 	{
-		// 뷰 변환 행렬
+		// 뷰 변환 행렬.
 		Matrix4 viewMatrix;
 
-		// 투영 변환 행렬
+		// 투영 변환 행렬.
 		Matrix4 projectionMatrix;
+
+		// 카메라 위치
+		Vector3 cameraPosition;
+
+		// 패딩
+		float padding;
 	};
 
 	class CameraComponent : public Component
@@ -21,15 +27,14 @@ namespace Blue
 	public:
 		CameraComponent();
 		~CameraComponent() = default;
-
+		
 		virtual void Tick(float deltaTime) override;
 		virtual void Draw() override;
 
 	private:
-		// 카메라 속성
+		// 카메라 속성.
 		CameraBuffer data;
-
-		// DX Buffer
+		// Dx buffer.
 		ID3D11Buffer* cameraBuffer = nullptr;
 	};
 }

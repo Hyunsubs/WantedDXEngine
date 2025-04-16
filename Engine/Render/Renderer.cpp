@@ -28,10 +28,9 @@ namespace Blue
 			D3D_FEATURE_LEVEL_11_0,
 		};
 
-		// 출력할 피쳐레벨
 		D3D_FEATURE_LEVEL outFeatureLevel;
 
-		// 장치 생성
+		// 장치 생성.
 		ThrowIfFailed(D3D11CreateDevice(
 			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -43,12 +42,13 @@ namespace Blue
 			&device,
 			&outFeatureLevel,
 			&context
-		), TEXT("Failed to create devices."));
+		), TEXT("Failed to create devices."))
 
-		// 팩토리 리소르 생성
+		// IDXGIFactory 리소스 생성.
 		IDXGIFactory* factory = nullptr;
-		// CreateDXGIFactory(__uuidof(factory), reinterpret_cast<void**>(&factory));
-		ThrowIfFailed(CreateDXGIFactory(IID_PPV_ARGS(&factory)), TEXT("Failed To Create DXGI Factory."));
+		//CreateDXGIFactory(__uuidof(factory), reinterpret_cast<void**>(&factory));
+		ThrowIfFailed(CreateDXGIFactory(IID_PPV_ARGS(&factory)), 
+			TEXT("Failed to create dxgifactory."))
 
 		// 스왑 체인 정보 구조체.
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = { };
@@ -61,27 +61,80 @@ namespace Blue
 		swapChainDesc.BufferDesc.Width = width;
 		swapChainDesc.BufferDesc.Height = height;
 		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		swapChainDesc.BufferDesc.RefreshRate.Denominator = 144;
-		swapChainDesc.BufferDesc.RefreshRate.Numerator = 1;
-		// 그리기 전에 매번 렌더타겟 뷰 바인딩 하도록 하는 옵션
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
-		// SwapChain 생성
-		ThrowIfFailed(factory->CreateSwapChain
-		(
+		//D3D_FEATURE_LEVEL targetLevel;
+
+		// 장치 생성.
+		//ThrowIfFailed(D3D11CreateDeviceAndSwapChain(
+		//	nullptr,
+		//	D3D_DRIVER_TYPE_HARDWARE,
+		//	nullptr,
+		//	flag,
+		//	featureLevels,
+		//	_countof(featureLevels),
+		//	D3D11_SDK_VERSION,
+		//	&swapChainDesc,
+		//	&swapChain,
+		//	&device,
+		//	nullptr,
+		//	&context
+		//), TEXT("Failed to create devices"));
+
+		// SwapChain 생성.
+		ThrowIfFailed(factory->CreateSwapChain(
 			device,
 			&swapChainDesc,
 			&swapChain
-		), TEXT("Failed To Create a Swap Chain"));
+		), TEXT("Failed to create a swap chain."))
 
 		// 렌더 타겟 뷰 생성.
 		ID3D11Texture2D* backbuffer = nullptr;
-		ThrowIfFailed(swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer)), TEXT("Failed To Get Back Buffer"));
-		ThrowIfFailed(device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView), TEXT("Failedd To Create Render Target View"));
+		//swapChain->GetBuffer(
+		//	0,
+		//	__uuidof(backbuffer),
+		//	reinterpret_cast<void**>(&backbuffer)
+		//);
 
-		// 사용한 리소스 해제
+		ThrowIfFailed(swapChain->GetBuffer(
+			0, 
+			IID_PPV_ARGS(&backbuffer)
+		), TEXT("Failed to get back buffer"))
+
+		ThrowIfFailed(device->CreateRenderTargetView(
+			backbuffer, nullptr, &renderTargetView
+		), TEXT("Failed to create render target view"))
+
+		// 사용한 리소스 해제.
 		backbuffer->Release();
 		backbuffer = nullptr;
+
+
+		// 뎁스 스텐실 뷰 변경
+		ID3D11Texture2D* depthStencilBuffer = nullptr;
+		D3D11_TEXTURE2D_DESC depthStencilDesc = {};
+		depthStencilDesc.Width = width;
+		depthStencilDesc.Height = height;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+		// 2차원 리소스 생성
+		ThrowIfFailed(device->CreateTexture2D(&depthStencilDesc, nullptr, &depthStencilBuffer), TEXT("Failed to Create DepthStencilBuffer"))
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+		// 뷰 생성
+		ThrowIfFailed(device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView), TEXT("Failed to Create DepthStencilView"));
+
+		// 사용한 리소스 해제
+		depthStencilBuffer->Release();
+		depthStencilBuffer = nullptr;
 
 		// 뷰포트(화면).
 		viewport.TopLeftX = 0.0f;
@@ -97,22 +150,28 @@ namespace Blue
 
 	Renderer::~Renderer()
 	{
+		// DX 리소스 해제.
+		if (context)
+		{
+			context->Release();
+			context = nullptr;
+		}
+		if (swapChain)
+		{
+			swapChain->Release();
+			swapChain = nullptr;
+		}
+
 		if (renderTargetView)
 		{
 			renderTargetView->Release();
 			renderTargetView = nullptr;
 		}
 
-		if (context)
+		if (depthStencilView)
 		{
-			context->Release();
-			context = nullptr;
-		}
-
-		if (swapChain)
-		{
-			swapChain->Release();
-			swapChain = nullptr;
+			depthStencilView->Release();
+			depthStencilView = nullptr;
 		}
 
 		if (device)
@@ -122,36 +181,43 @@ namespace Blue
 		}
 	}
 
-	void Renderer::Draw(std::shared_ptr<class Level> level)
+	// Ctrl K / Ctrl O.
+	void Renderer::Draw(std::shared_ptr<Level> level)
 	{
+		// 화면 크기 변경 중일 때는 종료.
 		if (isResizing)
 		{
 			return;
 		}
 
 		// 그리기 전 작업 (BeginScene).
-		context->OMSetRenderTargets(1, &renderTargetView, nullptr);
-
+		context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+		
 		// 지우기(Clear).
 		float color[] = { 0.6f, 0.7f, 0.8f, 1.0f };
 		context->ClearRenderTargetView(renderTargetView, color);
+		context->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		// Draw.
 
-		// Draw
-		// 카메라 바인딩
+		// 카메라 바인딩.
 		if (level->GetCamera())
 		{
 			level->GetCamera()->Draw();
 		}
 
-
-		for (uint32 ix = 0; ix < level->ActorCount(); ix++)
+		for (uint32 ix = 0; ix < level->ActorCount(); ++ix)
 		{
-			// 액터 가져오기
+			// 액터 가져오기.
 			auto actor = level->GetActor(ix);
 
-			// Draw
+			// Draw.
 			if (actor->IsActive())
 			{
+				//for (const auto& component : actor->components)
+				//{
+				//	// Check if component is drawable.
+				//}
+
 				actor->Draw();
 			}
 		}
@@ -162,44 +228,82 @@ namespace Blue
 
 	void Renderer::OnResize(uint32 width, uint32 height)
 	{
-		// 창 변경으로 인한 리소스 크기 조정
+		// 창 변경으로 인한 리소스 크기 조정.
 		if (!device || !context || !swapChain)
 		{
 			return;
 		}
+
 		isResizing = true;
 
-		// context 비우기
+		// context 비우기.
 		context->ClearState();
 		context->Flush();
 
-		// 렌더타겟 해제
+		// 렌더타겟 해제.
 		if (renderTargetView)
 		{
 			renderTargetView->Release();
 			renderTargetView = nullptr;
 		}
 
-		// 스왑체인 백버퍼 크기 변경
+		// 뎁스 스텐실 뷰 해제
+		if (depthStencilView)
+		{
+			depthStencilView->Release();
+			depthStencilView = nullptr;
+		}
+
+
+		// 스왑체인 백버퍼 크기 변경.
 		ThrowIfFailed(
-			swapChain->ResizeBuffers(0, width, height,
-				DXGI_FORMAT_R8G8B8A8_UNORM,0), TEXT("Failed to resize swapchain buffer.")
+			swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0),
+			TEXT("Failed to resize swapchain buffer.")
 		);
-		// 렌더타겟 재생성
+
+		// 렌더타겟 재생성.
 		ID3D11Texture2D* backbuffer = nullptr;
 		ThrowIfFailed(
 			swapChain->GetBuffer(0, IID_PPV_ARGS(&backbuffer)),
-			TEXT("Failed tp get buffer from swapchain")
+			TEXT("Failed to get buffer from swapchain.")
 		);
 
-		ThrowIfFailed(device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView), 
-			TEXT("Failed To Create Render Target View"));
+		ThrowIfFailed(
+			device->CreateRenderTargetView(backbuffer, nullptr, &renderTargetView),
+			TEXT("Failed to created render target view.")
+		);
+
+
+		// 뎁스 스텐실 뷰 변경
+		ID3D11Texture2D* depthStencilBuffer = nullptr;
+		D3D11_TEXTURE2D_DESC depthStencilDesc = {};
+		depthStencilDesc.Width = width;
+		depthStencilDesc.Height = height;
+		depthStencilDesc.MipLevels = 1;
+		depthStencilDesc.ArraySize = 1;
+		depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilDesc.SampleDesc.Count = 1;
+		depthStencilDesc.SampleDesc.Quality = 0;
+		depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+		// 2차원 리소스 생성
+		ThrowIfFailed(device->CreateTexture2D(&depthStencilDesc, nullptr, &depthStencilBuffer), TEXT("Failed to Create DepthStencilBuffer"))
+
+			D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+		// 뷰 생성
+		ThrowIfFailed(device->CreateDepthStencilView(depthStencilBuffer, &depthStencilViewDesc, &depthStencilView), TEXT("Failed to Create DepthStencilView"));
 
 		// 사용한 리소스 해제
+		depthStencilBuffer->Release();
+		depthStencilBuffer = nullptr;
+
 		backbuffer->Release();
 		backbuffer = nullptr;
 
-		// 뷰포트 업데이트
+		// 뷰포트 업데이트.
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
 		viewport.Width = (float)width;
@@ -207,7 +311,7 @@ namespace Blue
 		viewport.MaxDepth = 1.0f;
 		viewport.MinDepth = 0.0f;
 
-		// 뷰포트 설정
+		// 뷰포트 설정.
 		context->RSSetViewports(1, &viewport);
 
 		isResizing = false;

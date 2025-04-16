@@ -80,16 +80,16 @@ namespace Blue
 				int v1, v2, v3;
 				int t1, t2, t3;
 				int n1, n2, n3;
-
+				
 				sscanf_s(line, "f %d/%d/%d %d/%d/%d %d/%d/%d",
 					&v1, &t1, &n1, &v2, &t2, &n2, &v3, &t3, &n3);
 
 				vertices.emplace_back(
-					positions[v1 - 1],
-					Vector3::One,
+					positions[v1 - 1], 
+					Vector3::One, 
 					texCoords[t1 - 1],
 					normals[n1 - 1]);
-
+				
 				vertices.emplace_back(
 					positions[v2 - 1], Vector3::One, texCoords[t2 - 1],
 					normals[n2 - 1]);
@@ -109,6 +109,47 @@ namespace Blue
 		for (uint32 ix = 0; ix < (uint32)vertices.size(); ++ix)
 		{
 			indices.emplace_back(ix);
+		}
+
+		// 탄젠트 / 바이탄젠트(바이노멀) 계산
+		for (uint32 ix = 0; ix < (uint32)vertices.size(); ix += 3)
+		{
+			// 면을 이루는 3개의 정점 가져오기
+			Vertex& v0 = vertices[ix + 0];
+			Vertex& v1 = vertices[ix + 1];
+			Vertex& v2 = vertices[ix + 2];
+
+			// 간선 구하기.
+			Vector3 edge1 = v1.position - v0.position;
+			Vector3 edge2 = v2.position - v0.position;
+
+			// UV 차이 구하기.
+			Vector2 deltaUV1 = v1.texCoord - v0.texCoord;
+			Vector2 deltaUV2 = v2.texCoord - v0.texCoord;
+
+			// 스케일 구하기.
+			float denominator = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+			// 탄젠트.
+			Vector3 tangent = (edge1 * deltaUV2.y - edge2 * deltaUV1.y) * denominator;
+			Vector3 bitangent = (edge2 * deltaUV1.x - edge1 * deltaUV2.x) * denominator;
+
+			v0.tangent += tangent;
+			v1.tangent += tangent;
+			v2.tangent += tangent;
+
+			v0.bitangent += bitangent;
+			v1.bitangent += bitangent;
+			v2.bitangent += bitangent;
+		}
+
+		// 앞에서 구한 탄젠트/ 바이 탄젠트/ 노멀의 직교성 보장하도록 계산
+		// 그람-슈미트 알고리즘 & 외적
+		for (auto& vertex : vertices)
+		{
+			vertex.tangent = (vertex.tangent - vertex.normal * Dot(vertex.normal, vertex.tangent)).Normalized();
+			vertex.tangent = vertex.tangent.Normalized();
+			vertex.bitangent = Cross(vertex.normal, vertex.tangent);
 		}
 
 		// 메시 데이터 생성 및 리소스 등록.

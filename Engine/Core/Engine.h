@@ -21,7 +21,7 @@ namespace Blue
 		// 엔진 실행 함수.
 		void Run();
 
-		// 메인 레벨 설정 함수
+		// 메인 레벨 설정 함수.
 		void SetLevel(std::shared_ptr<class Level> newLevel);
 
 		// 윈도우 메시지 처리 루프.
@@ -34,10 +34,10 @@ namespace Blue
 		// 싱글톤 접근 함수.
 		static Engine& Get();
 
-		// 화면 크기 변경 이벤트
+		// 화면 크기 변경 이벤트 대응 함수.
 		void OnResize(uint32 width, uint32 height);
 
-		// 엔진 종료 함수
+		// 엔진 종료 함수.
 		void Quit();
 
 		// Getter.
@@ -48,10 +48,10 @@ namespace Blue
 		uint32 Height() const;
 
 	protected:
-		// 엔진 종료 플래그
+
+		// 엔진 종료 플래그.
 		bool isQuit = false;
-
-
+		
 		// 창 객체.
 		std::shared_ptr<class Window> window;
 
@@ -63,14 +63,14 @@ namespace Blue
 
 		// 텍스처 로더 객체.
 		std::unique_ptr<class TextureLoader> textureLoader;
-
-		// 모델 로더 객체
+		
+		// 모델 로더 객체.
 		std::unique_ptr<class ModelLoader> modelLoader;
 
-		// 입력 관리자 객체
+		// 입력 관리자 객체.
 		std::unique_ptr<class InputController> inputController;
 
-		// 메인 레벨
+		// 메인 레벨.
 		std::shared_ptr<class Level> mainLevel;
 
 		// 싱글톤 객체.

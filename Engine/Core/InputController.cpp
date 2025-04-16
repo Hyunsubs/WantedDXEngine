@@ -1,14 +1,13 @@
 #include "InputController.h"
 
-
 namespace Blue
 {
-	// static 변수 정의
+	// static 변수 정의.
 	InputController* InputController::instance = nullptr;
 
 	InputController::InputController()
 	{
-		// 싱글톤 변수 설정
+		// 싱글톤 변수 설정.
 		instance = this;
 	}
 
@@ -25,7 +24,7 @@ namespace Blue
 	{
 		return keyInputData[keyCode].isKeyUp;
 	}
-
+	
 	bool InputController::IsKey(unsigned int keyCode)
 	{
 		return keyInputData[keyCode].isKey;
@@ -40,12 +39,12 @@ namespace Blue
 	{
 		return mouseInputData[button].isButtonUp;
 	}
-
+	
 	bool InputController::IsButton(unsigned int button)
 	{
 		return mouseInputData[button].isButton;
 	}
-
+	
 	void InputController::ResetInputs()
 	{
 		for (KeyInputData& data : keyInputData)
@@ -93,11 +92,12 @@ namespace Blue
 		mousePreviousPosition = mousePosition;
 		mousePosition = Vector2((float)x, (float)y);
 	}
-
+	
 	InputController& InputController::Get()
 	{
 		return *instance;
 	}
+
 	bool InputController::IsValid()
 	{
 		return instance != nullptr;

@@ -13,6 +13,6 @@ namespace Blue
 		void Update(float deltaTime);
 
 	private:
-
+		void Rotate(float angle);
 	};
 }

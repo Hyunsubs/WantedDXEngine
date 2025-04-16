@@ -6,20 +6,20 @@
 
 namespace Blue
 {
-    struct MeshData;
-    class ModelLoader
-    {
-    public:
-        ModelLoader();
-        ~ModelLoader() = default;
+	struct MeshData;
+	class ModelLoader
+	{
+	public:
+		ModelLoader();
+		~ModelLoader() = default;
 
-        bool Load(const std::string& name, std::weak_ptr<MeshData>& outData);
+		bool Load(const std::string& name, std::weak_ptr<MeshData>& outData);
 
-        static ModelLoader& Get();
+		static ModelLoader& Get();
 
-    private:
-        static ModelLoader* instance;
+	private:
+		static ModelLoader* instance;
 
-        std::unordered_map<std::string, std::shared_ptr<MeshData>> meshes;
-    };
+		std::unordered_map<std::string, std::shared_ptr<MeshData>> meshes;
+	};
 }

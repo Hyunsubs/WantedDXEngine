@@ -1,8 +1,5 @@
 #include "Engine.h"
 #include "Window.h"
-
-#include "Level/Level.h"
-
 #include "../Render/Renderer.h"
 
 #include "Resource/ShaderLoader.h"
@@ -10,6 +7,8 @@
 #include "Resource/ModelLoader.h"
 
 #include "InputController.h"
+
+#include "Level/Level.h"
 
 #include <iostream>
 
@@ -27,7 +26,7 @@ namespace Blue
 		// 싱글톤 객체 값 설정.
 		instance = this;
 
-		// 입력 관리자 객체 생성
+		// 입력 관리자 객체 생성.
 		inputController = std::make_unique<InputController>();
 
 		// 창 객체 생성.
@@ -41,9 +40,9 @@ namespace Blue
 		// 텍스처 로더 객체 생성.
 		textureLoader = std::make_unique<TextureLoader>();
 
-		// 모델 로더 객체 생성
+		// 모델 로더 객체 생성.
 		modelLoader = std::make_unique<ModelLoader>();
-		
+
 		// 렌더러 생성.
 		renderer = std::make_shared<Renderer>(
 			width, height, window->Handle()
@@ -52,35 +51,32 @@ namespace Blue
 
 	Engine::~Engine()
 	{
-		
 	}
 
 	void Engine::Run()
 	{
-		// 타이머 (틱/델타타임)
+		// 타이머 (틱/델타타임).
 		LARGE_INTEGER currentTime;
 		LARGE_INTEGER previousTime;
 		LARGE_INTEGER frequency;
-		
-		// 하드웨어 타이머의 해상도 값(기준 단위)
+
+		// 하드웨어 타이머의 해상도 값(기준 단위).
 		QueryPerformanceFrequency(&frequency);
 
-		// 현재 시간
+		// 현재 시간.
 		QueryPerformanceCounter(&currentTime);
 		previousTime = currentTime;
 
-		// 프레임 계산에 사용할 변수
-		float targetFrameRate = 120.f;
-
-		// 고정 프레임 속도를 사용하기 위한 변수
-		float oneFrameTime = 1.f / targetFrameRate;
-
+		// 프레임 계산에 사용할 변수.
+		float targetFrameRate = 120.0f;
+		// 고정 프레임 속도를 사용하기 위한 변수.
+		float oneFrameTime = 1.0f / targetFrameRate;
 
 		// 메시지 처리 루프.
 		MSG msg = {};
 		while (msg.message != WM_QUIT)
 		{
-			// 엔진 종료 처리
+			// 엔진 종료 처리.
 			if (isQuit)
 			{
 				break;
@@ -99,21 +95,31 @@ namespace Blue
 			// 창에 메시지가 없을 때 다른 작업 처리.
 			else
 			{
-				// 현재 시간 가져오기
+				// 현재 시간 가져오기.
 				QueryPerformanceCounter(&currentTime);
 
-				float deltaTime = (float)(currentTime.QuadPart - previousTime.QuadPart) / (float)frequency.QuadPart;
+				// 프레임 시간 계산.
+				float deltaTime = (float)(currentTime.QuadPart - previousTime.QuadPart)
+					/ (float)frequency.QuadPart;
 
-				// 프레임 제한
+				// 프레임 제한.
 				if (deltaTime >= oneFrameTime)
 				{
-					// 문자열 생성
-					wchar_t stat[512] = {};
-					swprintf_s(stat, 512, TEXT("[%s] - [DeltaTime: %f] [FPS : %d]"), window->Title().c_str(), deltaTime, (int)ceil(1.f / deltaTime));
-					
-					// 창 제목에 출력
+					// 출력.
+					//std::cout << "DeltaTime: " << deltaTime 
+					//	<< " | OneFrameTime: " << oneFrameTime 
+					//	<< " | FPS: " << (int)ceil(1.0f / deltaTime) << "\n";
+
+					// 문자열 생성.
+					wchar_t stat[512] = { };
+					swprintf_s(stat, 512, TEXT("[%s] - [DeltaTime: %f] [FPS: %d]"),
+						window->Title().c_str(), deltaTime, (int)ceil(1.0f / deltaTime));
+
+					// 창 제목에 출력.
 					SetWindowText(window->Handle(), stat);
 
+					// 엔진 루프.
+					// 레벨 처리.
 					if (mainLevel)
 					{
 						mainLevel->BeginPlay();
@@ -121,27 +127,25 @@ namespace Blue
 						renderer->Draw(mainLevel);
 					}
 
-					// 프레임 시간 업데이트
+					// 프레임 시간 업데이트.
 					previousTime = currentTime;
 
-					// 입력 초기화
+					// 입력 초기화.
 					inputController->ResetInputs();
 				}
-
-
 			}
 		}
 	}
 
 	void Engine::SetLevel(std::shared_ptr<Level> newLevel)
 	{
-		// 메인 레벨 설정
+		// 메인 레벨 설정.
 		mainLevel = newLevel;
 	}
 
 	LRESULT Engine::WindowProc(HWND handle, UINT message, WPARAM wparam, LPARAM lparam)
 	{
-		// 입력 관리자가 준비 안됐으면 종료
+		// 입력 관리자가 준비 안됐으면 종료.
 		if (!InputController::IsValid())
 		{
 			return DefWindowProc(handle, message, wparam, lparam);
@@ -153,8 +157,10 @@ namespace Blue
 			// 창이 삭제되면 실행됨.
 		case WM_DESTROY:
 			// 이때 프로그램 종료 메시지를 발행.
+			//PostQuitMessage(0);
 			Engine::Get().Quit();
 			break;
+
 		case WM_LBUTTONDOWN:
 		{
 			InputController::Get().SetButtonUpDown(0, false, true);
@@ -193,7 +199,7 @@ namespace Blue
 
 		case WM_MOUSEMOVE:
 		{
-			// 현재 위치값 가져오기
+			// 현재 마우스 포인터 위치 값 가져오기.
 			int xPosition = LOWORD(lparam);
 			int yPosition = HIWORD(lparam);
 
@@ -249,7 +255,7 @@ namespace Blue
 
 	void Engine::OnResize(uint32 width, uint32 height)
 	{
-		// 예외처리
+		// 예외처리.
 		if (!window)
 		{
 			return;
@@ -259,17 +265,18 @@ namespace Blue
 		{
 			return;
 		}
-		
-		// 윈도우 클래스의 크기 조정
+
+		// 윈도우 클래스의 크기 조정.
 		window->SetWidthHeight(width, height);
 
-		// 전체 창 크기에서 실제로 그려지는 영역의 크기(ClientRect)를 구하기
+		// 전체 창 크기에서 실제로 그려지는 영역의 크기(ClientRect)를 구하기.
 		RECT rect;
 		GetClientRect(window->Handle(), &rect);
 
 		uint32 w = (uint32)(rect.right - rect.left);
 		uint32 h = (uint32)(rect.bottom - rect.top);
 
+		// 렌더러의 크기 조정 함수 호출.
 		renderer->OnResize(w, h);
 	}
 
@@ -287,10 +294,12 @@ namespace Blue
 	{
 		return *renderer->context;
 	}
+	
 	uint32 Engine::Width() const
 	{
 		return window->Width();
 	}
+	
 	uint32 Engine::Height() const
 	{
 		return window->Height();

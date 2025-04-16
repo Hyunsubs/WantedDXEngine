@@ -23,11 +23,12 @@ namespace Blue
 		// 그리기 함수.
 		void Draw(std::shared_ptr<class Level> level);
 
-		// 크기 변경 함수
+		// 크기 변경 함수.
 		void OnResize(uint32 width, uint32 height);
 
 	private:
-		// 크기 변경 확인 변수
+
+		// 크기 변경 여부 확인 변수.
 		bool isResizing = false;
 
 		// 리소스.
@@ -38,6 +39,9 @@ namespace Blue
 
 		// 버퍼.
 		ID3D11RenderTargetView* renderTargetView = nullptr;
+
+		// 뎁스 버퍼
+		ID3D11DepthStencilView* depthStencilView = nullptr;
 
 		// 뷰포트.
 		D3D11_VIEWPORT viewport;

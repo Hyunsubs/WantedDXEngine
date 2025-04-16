@@ -8,5 +8,6 @@ namespace Blue
 	{
 	public:
 		QuadActor();
+		~QuadActor() = default;
 	};
 }

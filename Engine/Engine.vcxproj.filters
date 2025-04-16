@@ -78,19 +78,25 @@
     <ClCompile Include="Level\Level.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Component\StaticMesh.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Level\DemoLevel.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Actor\QuadActor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Component\CameraComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Component\StaticMeshComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Level\DemoLevel.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="Core\InputController.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\SphereMesh.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor\CameraActor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,9 +161,6 @@
     <ClInclude Include="Math\Transform.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="stbi_image.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\ModelLoader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -170,19 +173,25 @@
     <ClInclude Include="Level\Level.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Component\StaticMesh.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Level\DemoLevel.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Actor\QuadActor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Component\CameraComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Component\StaticMeshComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Level\DemoLevel.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Core\InputController.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\SphereMesh.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor\CameraActor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,10 +200,13 @@
     <FxCompile Include="HLSLShader\DefaultPixelShader.hlsl" />
     <FxCompile Include="HLSLShader\TextureMappingPixelShader.hlsl" />
     <FxCompile Include="HLSLShader\TextureMappingVertexShader.hlsl" />
+    <FxCompile Include="HLSLShader\NormalMappingVertexShader.hlsl" />
+    <FxCompile Include="HLSLShader\NormalMappingPixelShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\ShaderLoader.inl">
       <Filter>헤더 파일</Filter>
     </None>
+    <None Include="HLSLShader\Common.hlsli" />
   </ItemGroup>
 </Project>

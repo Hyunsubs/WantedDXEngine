@@ -13,7 +13,10 @@ namespace Blue
 			const Vector3& color, 
 			const Vector2& texCoord,
 			const Vector3& normal)
-			: position(position), color(color), texCoord(texCoord), normal(normal)
+			: position(position), 
+			color(color), 
+			texCoord(texCoord),
+			normal(normal)
 		{
 		}
 
@@ -30,7 +33,13 @@ namespace Blue
 		// ¡§¡° ±‚¡ÿ ≈ÿΩ∫√≥ ¡¬«•.
 		Vector2 texCoord;
 
-		// ≥Î∏÷ (π˝º±, Normal) ∫§≈Õ
+		// ≥Î∏÷ (π˝º±, Normal) ∫§≈Õ.
 		Vector3 normal;
+
+		// ≈∫¡®∆Æ (tangent) ∫§≈Õ
+		Vector3 tangent;
+
+		// πŸ¿Ã≈∫¡®∆Æ (bitangent) ∫§≈Õ
+		Vector3 bitangent;
 	};
 }
